@@ -1,4 +1,4 @@
-import os, re, json
+import os, re, json, requests
 
 from subprocess import Popen, PIPE
 from os.path import isdir
@@ -7,6 +7,7 @@ from os import listdir
 # from flask import Flask, request
 
 TEST_SUBSTR = "_test.go"
+GITHUB_ROOT = "https://api.github.com"
 
 def merge_d(a, b):
     z = a.copy()
@@ -100,8 +101,8 @@ def coverage_report(weights, project_coverage):
     # print data
     # return ("", 200)
 
-if __name__ == "__main__":
-    project_root = os.environ['GVR_PROJECT_ROOT']
+def main_coverage():
+    project_root = os.environ['GOVR_PROJECT_ROOT']
     pkg_root = os.path.join(project_root, "pkg")
     pkgs = [(pkg, os.path.join(pkg_root, pkg)) for pkg in listdir(pkg_root)]
     weights = discount_factors(reduce(reduce_line_counts, pkgs, {}))
@@ -110,5 +111,27 @@ if __name__ == "__main__":
     project_coverage = round(reduce(
         lambda pc, meta: pc + meta["discount_coverage"],
         weights.itervalues(), 0), 2)
+
     print coverage_report(weights, project_coverage)
+
     weights["total_coverage"] = project_coverage
+
+    print json.dumps(weights)
+
+def gh_set_status(status, owner, repo, sha):
+    # Valid status: pending, success, error, failure
+    path = "/repos/%s/%s/statuses/%s" % (owner, repo, sha)
+    payload = {"state": status, "context": "Test Coverage", "description": "Coverage passed with 50.06%"}
+    url = gh_url(path)
+    r = requests.post(url, json=payload, auth=(GITHUB_USER, GITHUB_PASS))
+    return r.json()
+
+def gh_zen():
+  r = requests.get(github_url("/zen"))
+  print "Got response: %s" % r.text
+
+def gh_url(path):
+  return "%s%s" % (GITHUB_ROOT, path)
+
+if __name__ == "__main__":
+  main_coverage()
