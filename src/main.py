@@ -13,7 +13,7 @@ if __name__ == "__main__":
 		help="Run as client under travis ci", action="store_true")
 
 	parser.add_argument("-p", "--project",
-			help="Project under test, required by -r and -t")
+		help="Project under test, required by -r and -t")
 
 	parser.add_argument("-s", "--server",
 		help="Run as server", action="store_true")
