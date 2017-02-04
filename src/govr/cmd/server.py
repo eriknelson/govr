@@ -17,7 +17,7 @@ def routes(server):
 	server.app.add_url_rule("/coverage", methods=["GET"], view_func=server.coverage)
 
 class Server:
-	FLASK_APP_NAME = "govrd"
+	FLASK_APP_NAME = "govr-server"
 
 	def __init__(self, args):
 		if args.server_git_repo == "":
