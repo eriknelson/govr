@@ -1,0 +1,41 @@
+[TODO]
+
+[Server]
+* Server init
+  X * needs to verify the state directory exists or create it
+  X * If doesn't exist, server should get passed project name on start:
+    --git-project=https://github.com/eriknelson/goverhub-ex.git
+    pull this down if it doesn't already exist and deposit in state dir
+    /srv/govr
+    /var/lib/govr/project/ansible-service-broker
+  X * Run initial coverage if not done so, write to coverage file
+  X * Hash badge url and clober master-coverage.svg with -> $hash.svg
+
+* Server coverage
+  * Return current coverage on GET /coverage
+
+* Accept server report uploads File uploads!
+  -> These need to be authenticated!
+
+* Manual refresh? PUT /coverage
+  -> Compose reusable coverage trigger
+
+* Github hooks for new commits to master POST /hook,
+  these need to trigger a full update
+
+* ! Error handling, what happens when builds break?
+
+[Travis Client]
+* Needs to be passed in govr-server location
+* Should run coverage report (have that now) -> new_coverage
+  -> Need to enhance this to write .profile coverage html
+* get current_coverage from govr-server
+* Handle >= pass or < fail against tested sha
+* tarball coverage html and upload to server
+* report results $server/reports/sha
+
+[Nice to have]
+* Config file (probably higher priority)
+* Better logging
+* Proper setup.py (setuptools?) install
+* (server) Check if running against branch other than master? Checkout branch if so
