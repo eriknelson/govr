@@ -1,9 +1,14 @@
 #!/usr/bin/env python
-import os, re, json, argparse
+import os, argparse
 
 from govr.cmd import *
+from govr.util import load_config
 
-if __name__ == "__main__":
+MAIN_DIR = os.path.dirname(os.path.realpath(__file__))
+DEFAULT_TRAVIS_CONFIG_FILE = "govr-travis.yml"
+DEFAULT_TRAVIS_CONFIG = os.path.join(MAIN_DIR, DEFAULT_TRAVIS_CONFIG_FILE)
+
+def main():
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-r", "--report",
@@ -11,6 +16,9 @@ if __name__ == "__main__":
 
 	parser.add_argument("-t", "--travis",
 		help="Run as client under travis ci", action="store_true")
+	parser.add_argument("--travis-config", help="travis mode configuration file",
+		default=DEFAULT_TRAVIS_CONFIG)
+	parser.add_argument("--travis-commit", help="Commit sha under test")
 
 	parser.add_argument("-p", "--project",
 		help="Project under test, required by -r and -t")
@@ -33,9 +41,12 @@ if __name__ == "__main__":
 	print "Running against project: %s" % args.project
 
 	if args.travis:
-		if args.project == "":
-			raise Exception("ERROR: Running in travis mode requires a --project path to test")
-		Travis(args).run()
+		if not args.travis_config:
+			raise Exception("ERROR: Must provide a valid govr-travis.yml configuration via --travis-config")
+		if not args.travis_commit:
+			raise Exception("ERROR: Must provide commit sha under test for status updates")
+
+		Travis(args, load_config(args.travis_config)).run()
 	elif args.server:
 		"Running server"
 		Server(args).run()
@@ -43,3 +54,6 @@ if __name__ == "__main__":
 		if args.project == "":
 			raise Exception("ERROR: Running in report mode requires a --project path to test")
 		print Report(args).run()
+
+if __name__ == "__main__":
+	main()
