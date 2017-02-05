@@ -6,3 +6,4 @@ go/
 build.sh
 run.sh
 data/
+src/govr-travis.yml
