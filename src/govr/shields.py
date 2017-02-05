@@ -36,7 +36,6 @@ def gen_shield_url(coverage, color):
 	return "%s/%s-%s%%-%s.svg" % (SHIELDS_ROOT, SHIELD_TEXT, coverage, color)
 
 def link_shield(img_dir, src_file):
-	import pdb; pdb.set_trace()
 	dest_link = path.join(img_dir, LATEST_SVG)
 	relative_src = "./%s" % src_file
 	ln_cmd = ["ln", "-sf", relative_src, dest_link]
