@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from os import path, makedirs
 from subprocess import Popen, PIPE
 from govr.util import is_dir_empty
@@ -49,7 +49,7 @@ class Server:
 		return "Break the hairpin\n"
 
 	def coverage(self):
-		return (self.state_dir, 200)
+		return jsonify({"total_coverage": self._read_total_coverage()})
 	######################################################################
 
 	def run(self):
