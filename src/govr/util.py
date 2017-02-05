@@ -1,4 +1,8 @@
-import os
+import os, yaml
+
+def load_config(path):
+	with open(path, "r") as config:
+		return yaml.load(config)
 
 def merge_d(a, b):
 	z = a.copy()
