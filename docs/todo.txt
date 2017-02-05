@@ -1,41 +1,36 @@
 [TODO]
 
+[high level]
+Get the basic status pass/fail working simply based on the %, no profile numbers
+  -> Need to get the containerized server with params working (apache)
+  -> Setup server merge -> master hook to update current coverage
+  -> Gracefully handle test failures? Blow up in travis mode?
+
 [Server]
-* Server init
-  X * needs to verify the state directory exists or create it
-  X * If doesn't exist, server should get passed project name on start:
-    --git-project=https://github.com/eriknelson/goverhub-ex.git
-    pull this down if it doesn't already exist and deposit in state dir
-    /srv/govr
-    /var/lib/govr/project/ansible-service-broker
-  X * Run initial coverage if not done so, write to coverage file
-  X * Hash badge url and clober master-coverage.svg with -> $hash.svg
-
-* Server coverage
-  * Return current coverage on GET /coverage
-
-* Accept server report uploads File uploads!
-  -> These need to be authenticated!
-
-* Manual refresh? PUT /coverage
-  -> Compose reusable coverage trigger
+* Need to get things containerized up, including the apache configuration
+and parameterization of the entrypoint. Consider accepting some kind of json
+as an argument and parsing in python script for writing out to config?
 
 * Github hooks for new commits to master POST /hook,
   these need to trigger a full update
 
 * ! Error handling, what happens when builds break?
+  -> Prevent updating test state on failures
 
 [Travis Client]
-* Needs to be passed in govr-server location
-* Should run coverage report (have that now) -> new_coverage
-  -> Need to enhance this to write .profile coverage html
-* get current_coverage from govr-server
-* Handle >= pass or < fail against tested sha
-* tarball coverage html and upload to server
 * report results $server/reports/sha
 
 [Nice to have]
 * Config file (probably higher priority)
+  -> Started this, could probably be done better, but travis has a notion of it
 * Better logging
 * Proper setup.py (setuptools?) install
 * (server) Check if running against branch other than master? Checkout branch if so
+* Manual refresh? PUT /coverage
+  -> Compose reusable coverage trigger
+
+[On deck]
+* Accept server report uploads File uploads!
+  -> These need to be authenticated!
+travis !!  -> Need to enhance this to write .profile coverage html
+travis !! * tarball coverage html and upload to server
