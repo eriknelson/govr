@@ -3,16 +3,18 @@
 [high level]
 Get the basic status pass/fail working simply based on the %, no profile numbers
   -> Need to get the containerized server with params working (apache)
-  -> Setup server merge -> master hook to update current coverage
+X  -> Setup server merge -> master hook to update current coverage
   -> Gracefully handle test failures? Blow up in travis mode?
+  ^^ Really important. Everything needs to be more resiliant.
+  Think this works with logging and a better error strategy
 
 [Server]
 * Need to get things containerized up, including the apache configuration
 and parameterization of the entrypoint. Consider accepting some kind of json
 as an argument and parsing in python script for writing out to config?
 
-* Github hooks for new commits to master POST /hook,
-  these need to trigger a full update
+X * Github hooks for new commits to master POST /hook,
+X   these need to trigger a full update
 
 * ! Error handling, what happens when builds break?
   -> Prevent updating test state on failures
