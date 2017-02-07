@@ -14,7 +14,7 @@ RANGES = [
 	(30.0, 40.0, "yellow"),
 	(40.0, 50.0, "yellowgreen"),
 	(50.0, 60.0, "green"),
-	(60.0, 70.0, "brightgreen"),
+	(60.0, 100.0, "brightgreen"),
 ]
 
 def get_color(coverage):

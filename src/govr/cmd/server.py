@@ -15,6 +15,7 @@ COVERAGE_FILE = "coverage.json"
 def routes(server):
 	server.app.add_url_rule("/", methods=["GET"], view_func=server.hello)
 	server.app.add_url_rule("/coverage", methods=["GET"], view_func=server.coverage)
+	server.app.add_url_rule("/hook", methods=["POST"], view_func=server.hook)
 
 class Server:
 	FLASK_APP_NAME = "govr-server"
@@ -50,6 +51,26 @@ class Server:
 
 	def coverage(self):
 		return jsonify({"total_coverage": self._read_total_coverage()})
+
+	def hook(self):
+		# TODO: Queue? Concurrant runs? Make sure most recent push is triggering?
+
+		new_master_push = \
+			request.json["ref"] == "refs/heads/master" and \
+			request.headers["X-Github-Event"] == "push"
+
+		# Pull
+		test_sha = request.json["after"]
+		self._update_project(test_sha)
+
+		# If it's not a push even we care about, ignore
+		if not new_master_push:
+			return ("", 200)
+
+		self._update_coverage()
+		update_shield(self.state_dirs[IMG_DIR_NAME], self._read_total_coverage())
+
+		return ("Running update", 202)
 	######################################################################
 
 	def run(self):
@@ -76,6 +97,22 @@ class Server:
 		if path.exists(self.coverage_file) and not overwrite:
 			return
 
+		self._update_coverage()
+
+	def _update_project(self, sha):
+		# TODO: Handle errors on these cmds
+		fetch_cmd = ["git", "fetch", "--all", ]
+		checkout_cmd = ["git", "checkout", sha]
+
+		fetch_p = Popen(fetch_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+			cwd=self.state_dirs[PROJECT_DIR_NAME])
+		output, error = fetch_p.communicate()
+
+		checkout_p = Popen(checkout_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+			cwd=self.state_dirs[PROJECT_DIR_NAME])
+		output, error = checkout_p.communicate()
+
+	def _update_coverage(self):
 		coverage = self.test_runner.run()
 
 		print "Writing coverage to file: %s" % self.coverage_file
