@@ -14,6 +14,6 @@ if [[ "$1" == "debug" ]]; then
 /govr/main.py -s --server-debug --server-host=0.0.0.0 \
   --server-git-repo=https://github.com/eriknelson/govrhub-ex.git
 else
-/govr/main.py -s --server-host=0.0.0.0 \
+/govr/main.py -s --server-host=0.0.0.0 --server-port=8080 \
   --server-git-repo=https://github.com/eriknelson/govrhub-ex.git
 fi
