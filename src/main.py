@@ -20,15 +20,15 @@ def main():
 		default=DEFAULT_TRAVIS_CONFIG)
 	parser.add_argument("--travis-commit", help="Commit sha under test")
 
-	parser.add_argument("-p", "--project",
-		help="Project under test, required by -r and -t")
+	parser.add_argument("--project",
+			help="Project path under test, required by -r and -t")
 
 	parser.add_argument("-s", "--server",
 		help="Run as server", action="store_true")
 	parser.add_argument("--server-host",
 		help="Host to run flask server on", default="127.0.0.1")
 	parser.add_argument("--server-port",
-		help="Port to run flask server on", default=1337)
+		help="Port to run flask server on", default=8080)
 	parser.add_argument("--server-debug",
 		help="Run server in debug mode", action="store_true")
 	parser.add_argument("--server-state-dir",
@@ -41,6 +41,8 @@ def main():
 	print "Running against project: %s" % args.project
 
 	if args.travis:
+		if not args.project:
+			raise Exception("ERROR: Must provide a valid govr-travis.yml configuration via --travis-config")
 		if not args.travis_config:
 			raise Exception("ERROR: Must provide a valid govr-travis.yml configuration via --travis-config")
 		if not args.travis_commit:
